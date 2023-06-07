@@ -6,7 +6,7 @@
 import https from 'https';
 import crypto from 'crypto';
 import fs from 'fs';
-import { createHash } from '../section-two/lib';
+import { createHash } from '../section-2/lib';
 
 const start = Date.now();
 
