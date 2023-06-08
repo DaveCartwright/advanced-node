@@ -1,15 +1,16 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cookieSession = require('cookie-session');
-const passport = require('passport');
-const bodyParser = require('body-parser');
-const dotenv = require('dotenv');
-const path = require('path');
-dotenv.config(path.join(__dirname, '../.env'));
+import express from 'express';
+import mongoose from 'mongoose';
+import cookieSession from 'cookie-session';
+import passport from 'passport';
+import bodyParser from 'body-parser';
+import dotenv from 'dotenv';
+import path from 'path';
 
-require('./models/User');
-require('./models/Blog');
-require('./services/passport');
+dotenv.config({ path: path.join(__dirname, '../.env') });
+
+import './models/User';
+import './models/Blog';
+import './services/passport';
 
 mongoose.Promise = global.Promise;
 mongoose.connect(process.env.DATABASE_URL, {
@@ -32,7 +33,7 @@ app.use(passport.session());
 require('./routes/authRoutes')(app);
 require('./routes/blogRoutes')(app);
 
-if (['production'].includes(process.env.NODE_ENV)) {
+if (process.env.NODE_ENV === 'production') {
   app.use(express.static('client/build'));
 
   const path = require('path');
