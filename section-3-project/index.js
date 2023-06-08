@@ -3,15 +3,16 @@ const mongoose = require('mongoose');
 const cookieSession = require('cookie-session');
 const passport = require('passport');
 const bodyParser = require('body-parser');
-const keys = require('./config/keys');
-const dotenv = require('dotenv').config();
+const dotenv = require('dotenv');
+const path = require('path');
+dotenv.config(path.join(__dirname, '../.env'));
 
 require('./models/User');
 require('./models/Blog');
 require('./services/passport');
 
 mongoose.Promise = global.Promise;
-mongoose.connect(keys.mongoURI, {
+mongoose.connect(process.env.DATABASE_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -22,7 +23,7 @@ app.use(bodyParser.json());
 app.use(
   cookieSession({
     maxAge: 30 * 24 * 60 * 60 * 1000,
-    keys: [keys.cookieKey],
+    keys: [process.env.COOKIE_KEY],
   })
 );
 app.use(passport.initialize());
