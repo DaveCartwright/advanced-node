@@ -23,7 +23,7 @@ export default (app) => {
       } = req;
 
       const blogs = await redis.get(userId);
-      return !blogs.length ? next() : res.json(blogs);
+      return !blogs?.length ? next() : res.json(blogs);
     },
     async (req, res) => {
       const blogs = await Blog.find({ _user: req.user.id });
