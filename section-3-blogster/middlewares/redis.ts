@@ -6,6 +6,8 @@ export const checkCache = async (req, res, next) => {
     user: { id: userId },
   } = req;
 
-  const blogs = await redis.get(userId);
-  return !blogs?.length ? next() : res.json(blogs);
+  const JSONblogs = await redis.get(userId);
+  const parsedBlogs = JSON.parse(JSONblogs);
+
+  return !parsedBlogs?.length ? next() : res.json(parsedBlogs);
 };
