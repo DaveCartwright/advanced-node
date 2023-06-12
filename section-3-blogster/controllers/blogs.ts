@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { redis } from '../services/redis';
 
 const Blog = mongoose.model('Blog');
 
@@ -14,6 +15,7 @@ export const selectBlogByUserId = async (req, res) => {
 export const selectBlogsByUserId = async (req, res) => {
   const blogs = await Blog.find({ _user: req.user.id });
 
+  redis.set(req.user.id, JSON.stringify(blogs));
   res.send(blogs);
 };
 
