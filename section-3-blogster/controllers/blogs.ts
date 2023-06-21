@@ -1,37 +1,72 @@
-import mongoose from 'mongoose';
-import { redis } from '../services/redis';
+import { Response } from 'express';
+import { prisma } from '../services/prisma';
+import {
+  expireUserCacheOnCreate,
+  getCachedDataByKey,
+  setCacheWithTTL,
+} from '../repositories/redis';
+import { ContextualRequest } from '../interfaces/request';
+import { selectBlogsByUserId, selectBlogByIdForUser } from '../repositories/blogs';
 
-const Blog = mongoose.model('Blog');
-
-export const selectBlogByUserId = async (req, res) => {
-  const blog = await Blog.findOne({
-    _user: req.user.id,
-    _id: req.params.id,
-  });
-
-  res.send(blog);
-};
-
-export const selectBlogsByUserId = async (req, res) => {
-  const blogs = await Blog.find({ _user: req.user.id });
-
-  redis.set(req.user.id, JSON.stringify(blogs));
-  res.send(blogs);
-};
-
-export const createNewBlog = async (req, res) => {
-  const { title, content } = req.body;
-
-  const blog = new Blog({
-    title,
-    content,
-    _user: req.user.id,
-  });
-
+export const getBlogById = async (req: ContextualRequest, res: Response) => {
   try {
-    await blog.save();
-    res.send(blog);
+    const {
+      params: { id },
+    } = req;
+
+    const query = { where: { id } };
+
+    const cachedBlog = await getCachedDataByKey(query);
+    if (cachedBlog) {
+      return res.send(JSON.parse(cachedBlog));
+    }
+
+    const blog = await selectBlogByIdForUser(query);
+    await setCacheWithTTL(query, blog);
+
+    return res.send(blog);
   } catch (err) {
-    res.send(400, err);
+    res.status(400).send(err);
+  }
+};
+
+export const getBlogsByUserId = async (req: ContextualRequest, res: Response) => {
+  try {
+    const {
+      user: { id: userId },
+    } = req;
+
+    const query = { where: { userId } };
+
+    const cachedBlog = await getCachedDataByKey(query);
+    if (cachedBlog) {
+      return res.send(JSON.parse(cachedBlog));
+    }
+
+    const blogs = await selectBlogsByUserId(query);
+    await setCacheWithTTL(query, blogs);
+
+    return res.send(blogs);
+  } catch (err) {
+    res.status(400).send(err);
+  }
+};
+
+export const createNewBlog = async (req: ContextualRequest, res: Response) => {
+  try {
+    const {
+      body: { title, content },
+      user: { id: userId },
+    } = req;
+
+    const blog = await prisma.blog.create({
+      data: { title, content, userId },
+    });
+
+    expireUserCacheOnCreate(userId);
+
+    return res.send(blog);
+  } catch (err) {
+    res.status(400).send(err);
   }
 };
