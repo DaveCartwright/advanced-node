@@ -4,7 +4,7 @@ import { fetchBlog } from '../../actions';
 
 class BlogShow extends Component {
   componentDidMount() {
-    this.props.fetchBlog(this.props.match.params._id);
+    this.props.fetchBlog(this.props.match.params.id);
   }
 
   render() {
@@ -13,7 +13,6 @@ class BlogShow extends Component {
     }
 
     const { title, content } = this.props.blog;
-
     return (
       <div>
         <h3>{title}</h3>
@@ -24,7 +23,7 @@ class BlogShow extends Component {
 }
 
 function mapStateToProps({ blogs }, ownProps) {
-  return { blog: blogs[ownProps.match.params._id] };
+  return { blog: blogs[ownProps.match.params.id] };
 }
 
 export default connect(mapStateToProps, { fetchBlog })(BlogShow);
