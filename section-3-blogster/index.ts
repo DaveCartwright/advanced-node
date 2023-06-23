@@ -3,11 +3,7 @@ import mongoose from 'mongoose';
 import cookieSession from 'cookie-session';
 import passport from 'passport';
 import bodyParser from 'body-parser';
-import dotenv from 'dotenv';
-import path from 'path';
-
-dotenv.config({ path: path.join(__dirname, '../../.env') });
-
+import './dotenv';
 import './models/User';
 import './models/Blog';
 import authRoutes from './routes/authRoutes';
@@ -32,7 +28,7 @@ app.use(passport.session());
 authRoutes(app);
 blogRoutes(app);
 
-if (process.env.NODE_ENV === 'production') {
+if (['ci', 'production'].includes(process.env.NODE_ENV)) {
   app.use(express.static('client/build'));
 
   const path = require('path');
@@ -41,9 +37,7 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-
-
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Listening on port`, PORT);
 });
