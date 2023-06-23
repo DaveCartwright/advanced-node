@@ -69,6 +69,6 @@ jobs:
       - name: Start server
         run: nohup npm run start &
       - name: Wait
-        reun: sleep 3
+        run: sleep 3
       - name: Run tests
         run: npm run test
