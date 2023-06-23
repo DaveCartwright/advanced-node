@@ -1,28 +1,25 @@
 import { Response } from 'express';
 import { prisma } from '../services/prisma';
-import {
-  expireUserCacheOnCreate,
-  getCachedDataByKey,
-  setCacheWithTTL,
-} from '../repositories/redis';
+import { CacheKey, getCache, invalidateCacheByKey, setCache } from '../repositories/redis';
 import { ContextualRequest } from '../interfaces/request';
-import { selectBlogsByUserId, selectBlogByIdForUser } from '../repositories/blogs';
+import { selectBlogsByUserId, selectBlogById } from '../repositories/blogs';
+import { Prisma } from '@prisma/client';
 
 export const getBlogById = async (req: ContextualRequest, res: Response) => {
   try {
     const {
-      params: { id },
+      params: { id, author },
+      user: { id: userId },
     } = req;
 
-    const query = { where: { id } };
+    const query: Prisma.BlogFindUniqueArgs = { where: { id } };
+    const field: CacheKey = { ...query, collection: 'blog' };
 
-    const cachedBlog = await getCachedDataByKey(query);
-    if (cachedBlog) {
-      return res.send(JSON.parse(cachedBlog));
-    }
+    const cache = await getCache(userId, field);
+    if (cache) return res.json(cache);
 
-    const blog = await selectBlogByIdForUser(query);
-    await setCacheWithTTL(query, blog);
+    const blog = await selectBlogById(query);
+    await setCache(userId, field, blog);
 
     return res.send(blog);
   } catch (err) {
@@ -30,21 +27,21 @@ export const getBlogById = async (req: ContextualRequest, res: Response) => {
   }
 };
 
-export const getBlogsByUserId = async (req: ContextualRequest, res: Response) => {
+export const getBlogsByAuthor = async (req: ContextualRequest, res: Response) => {
   try {
     const {
+      params: { author },
       user: { id: userId },
     } = req;
 
-    const query = { where: { userId } };
+    const query: Prisma.BlogFindManyArgs = { where: { userId: userId } };
+    const field: CacheKey = { ...query, collection: 'blog' };
 
-    const cachedBlog = await getCachedDataByKey(query);
-    if (cachedBlog) {
-      return res.send(JSON.parse(cachedBlog));
-    }
+    const cache = await getCache(userId, field);
+    if (cache) return res.json(cache);
 
     const blogs = await selectBlogsByUserId(query);
-    await setCacheWithTTL(query, blogs);
+    await setCache(userId, field, blogs);
 
     return res.send(blogs);
   } catch (err) {
@@ -63,7 +60,7 @@ export const createNewBlog = async (req: ContextualRequest, res: Response) => {
       data: { title, content, userId },
     });
 
-    expireUserCacheOnCreate(userId);
+    invalidateCacheByKey(userId);
 
     return res.send(blog);
   } catch (err) {
