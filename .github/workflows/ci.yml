@@ -10,7 +10,7 @@ jobs:
   # name of the job
   build:
     # base machine image for VM
-    runs-on: [self-hosted, Linux, ubunto-latest]
+    runs-on: [self-hosted, Linux, ubuntu-latest]
 
     strategy:
       matrix:
