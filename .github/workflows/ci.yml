@@ -1,0 +1,74 @@
+# Caching the Node_Modules folder will speed up the build time during the CI
+# when npm i is run and there are no changes then the build saves time.
+cache:
+  directories:
+    - node_modules
+    - client/node_modules
+
+name: deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # name of the job
+  build:
+    # base machine image for VM
+    runs-on: [self-hosted, Linux, ubunto-latest]
+
+    strategy:
+      matrix:
+        node-version: ['18.15.0']
+
+    # services are aspects required to run the program correctly: DB Redis etc
+    # when the VM starts up these services will also start
+    # for testing purposes these services would be mocked and not necessary in the ci
+    services:
+      mongodb:
+        image: mongo
+        ports:
+          - 27017:27017
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+
+    # set environment variables
+    # if using jest use "setupFiles": ["<rootDir>/jest/set-env.ts"] to use .env.test config
+    # this should prevent the need to set node_env below
+    env:
+      NODE_ENV: ci
+      PORT: 3000
+
+    # nohup (no hang up) prevents background proceses running when command line it killed
+    # & tells the OS to run the command in the background (sub shell)
+    # sleep 3 creates a 3 second delay, allows server to start up
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Restore node modules cache
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+
+      - name: Install Dependencies
+        run: npm i --legacy-peer-deps
+      - name: Build
+        run: npm run build
+      - name: Start server
+        run: nohup npm run start &
+      - name: Wait
+        reun: sleep 3
+      - name: Run tests
+        run: npm run test
