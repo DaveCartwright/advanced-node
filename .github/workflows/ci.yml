@@ -19,15 +19,15 @@ jobs:
     # services are aspects required to run the program correctly: DB Redis etc
     # when the VM starts up these services will also start
     # for testing purposes these services would be mocked and not necessary in the ci
-    services:
-      mongodb:
-        image: mongo
-        ports:
-          - 27017:27017
-      redis:
-        image: redis
-        ports:
-          - 6379:6379
+    # services:
+    #   mongodb:
+    #     image: mongo
+    #     ports:
+    #       - 27017:27017
+    #   redis:
+    #     image: redis
+    #     ports:
+    #       - 6379:6379
 
     # set environment variables
     # if using jest use "setupFiles": ["<rootDir>/jest/set-env.ts"] to use .env.test config
