@@ -61,8 +61,8 @@ jobs:
       - name: Build
         run: npm run build
       - name: Start server
-        run: nohup npm run start &
-      - name: Wait
-        run: sleep 3
+      #   run: nohup npm run start &
+      # - name: Wait
+      #   run: sleep 3
       - name: Run tests
         run: npm run test
