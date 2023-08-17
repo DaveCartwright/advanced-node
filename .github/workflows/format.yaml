@@ -1,10 +1,10 @@
 # https://docs.github.com/actions
 
-name: CI/CD GitHub Actions Example
+name: CI/CD Formatting with commit
 on:
   push:
-    branches:
-      - '!master'
+    branches-ignore:
+      - master
 
 permissions:
   contents: write
