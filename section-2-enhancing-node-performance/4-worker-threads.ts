@@ -22,5 +22,5 @@ app.get('/blocking', async (req, res) => {
 app.get('/immediate', async (req, res) => res.send(`endpoint should respond immediately`));
 
 app.listen(port, () =>
-  console.log(`Example app listening on port ${port}! goto http://localhost:${port}/ to test`)
+  console.log(`Example app listening on port ${port}! goto http://localhost:${port}/ to test`),
 );

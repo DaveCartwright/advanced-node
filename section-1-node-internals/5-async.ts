@@ -27,5 +27,4 @@ doRequest();
 doRequest();
 doRequest();
 
-
 // what does this do?? add explanation

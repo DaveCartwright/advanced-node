@@ -16,7 +16,7 @@ const initWorker = () => {
   app.get('/blocking', async (req, res) => res.send(await blockingLoop(Date.now(), 50000000)));
   app.get('/hash', async (req, res) => res.send(await createHash(Date.now())));
   app.get('/immediate', async (req, res) =>
-    res.send(`/immediate endpoint should respond immediately`)
+    res.send(`/immediate endpoint should respond immediately`),
   );
 
   app.listen(port, () => console.log(`Example app listening on port ${port}!`));
