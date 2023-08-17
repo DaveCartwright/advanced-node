@@ -1,0 +1,47 @@
+# https://docs.github.com/actions
+
+name: CI/CD GitHub Actions Example
+on:
+  push:
+    branches:
+      - '!master'
+
+permissions:
+  contents: write
+
+jobs:
+  tests:
+    name: Checks
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: 'postgresql://admin:example@localhost:5432/postgres?schema=public'
+      NODE_VERSION: 20.x
+      REDIS_VERSION: latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node ${{env.NODE_VERSION}}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Spellcheck
+        id: cspell-action
+        uses: streetsidesoftware/cspell-action@v2
+        with:
+          verbose: true
+          incremental_files_only: false
+          files: |
+            /**
+            !/__*
+            !/*.{json,txt}
+            !/prisma
+            !/coverage
+            !/node_modules
+
+      - name: Prettify code
+        uses: creyD/prettier_action@v4.3
+        with:
+          prettier_options: --write **/*.{js,ts,tsx,md}
