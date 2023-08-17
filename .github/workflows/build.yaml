@@ -6,7 +6,7 @@ on:
   # whenever code is pushed to [these branches]
   push:
     branches:
-      - master
+      - '!master'
   # whenever a branch is going to merge into [these branches]
   pull_request:
     branches:
