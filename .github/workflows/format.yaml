@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   tests:
-    name: Checks
+    name: Format
     runs-on: ubuntu-latest
     env:
       DATABASE_URL: 'postgresql://admin:example@localhost:5432/postgres?schema=public'
