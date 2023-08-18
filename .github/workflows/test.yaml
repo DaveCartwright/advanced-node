@@ -10,6 +10,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   bump-package-version:
@@ -30,8 +31,6 @@ jobs:
       - name: Push files and tag
         uses: Amraneze/push-to-protected-branch@v1.5.0
         with:
-          create_tag: true
-          tag_version: ${{ steps.bump.outputs.new_version }}
           repository: ${{ github.repository }}
           branch_name: ${{ github.ref_name }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
