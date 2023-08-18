@@ -1,0 +1,32 @@
+# https://docs.github.com/actions
+
+name: CI/CD test githob context
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  checks:
+    name: Checks
+    runs-on: ubuntu-latest
+
+    env:
+      NODE_VERSION: 20.x
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: version
+        uses: copapow/version-bump-package@v1
+        id: bump
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - run: |
+          echo "Previous version: ${{ steps.bump.outputs.previous_version }}"
+          echo "New Version: ${{ steps.bump.outputs.new_version }}"
+
+      - name: GITHUB CONTEXT
+        run: echo ${{ github.event.pull_request }}
