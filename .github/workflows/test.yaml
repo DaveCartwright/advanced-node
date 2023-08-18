@@ -8,6 +8,9 @@ on:
     branches:
       - master
 
+permissions:
+  contents: write
+
 jobs:
   bump-package-version:
     # Only run if the PR closed by merging
