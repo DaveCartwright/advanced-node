@@ -36,5 +36,5 @@ jobs:
           repository: ${{ github.repository }}
           branch_name: ${{ github.ref_name }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          commit_message: 'ci: build version v${{ steps.bump.outputs.new_version }}'
+          commit_message: 'ci: build version vv${{ steps.bump.outputs.new_version }}'
           files_to_commit: 'package.json'
