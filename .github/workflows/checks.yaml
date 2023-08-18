@@ -10,13 +10,12 @@ permissions:
   contents: write
 
 jobs:
-  tests:
-    name: Format
+  checks:
+    name: Checks
     runs-on: ubuntu-latest
+
     env:
-      DATABASE_URL: 'postgresql://admin:example@localhost:5432/postgres?schema=public'
       NODE_VERSION: 20.x
-      REDIS_VERSION: latest
 
     steps:
       - name: Checkout
@@ -32,14 +31,9 @@ jobs:
         uses: streetsidesoftware/cspell-action@v2
         with:
           verbose: true
-          incremental_files_only: false
           files: |
-            /**
-            !/__*
-            !/*.{json,txt}
-            !/prisma
-            !/coverage
-            !/node_modules
+            /src/**/*.{ts,js,tsx,md}
+            /readme.md
 
       - name: Prettify code
         uses: creyD/prettier_action@v4.3

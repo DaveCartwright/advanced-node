@@ -1,0 +1,24 @@
+# https://docs.github.com/actions
+
+name: Bump Package Version On Merge
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - master
+
+jobs:
+  bump-package-version:
+    # Only run if the PR closed by merging
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: copapow/version-bump-package@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - run: |
+          echo "Previous version: ${{ steps.bump.outputs.previous_version }}"
+          echo "New Version: ${{ steps.bump.outputs.new_version }}"
