@@ -26,11 +26,7 @@ jobs:
       - run: |
           echo "Previous version: ${{ steps.bump.outputs.previous_version }}"
           echo "New Version: ${{ steps.bump.outputs.new_version }}"
-      - name: echo
-        run: |
-          echo "${{ github.repository }}"
-          echo "${{ github.ref_name }}"
-          echo "${{ secrets.GITHUB_TOKEN }}"
+
       - name: Push files and tag
         uses: Amraneze/push-to-protected-branch@v1.5.0
         with:
