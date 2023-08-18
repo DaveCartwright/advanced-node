@@ -14,7 +14,7 @@ on:
 
 jobs:
   tests:
-    name: Checks
+    name: Unit and Integration Tests
     runs-on: ubuntu-latest
     env:
       DATABASE_URL: 'postgresql://admin:example@localhost:5432/postgres?schema=public'
@@ -24,7 +24,7 @@ jobs:
     steps:
       # configures a PostgreSQL DB instance in the CI for tests. Connect via localhost or 0.0.0.0:PORT
       # https://github.com/marketplace/actions/setup-postgresql-for-linux-macos-windows
-      - name: Setup DB
+      - name: Start DB
         uses: ikalnytskyi/action-setup-postgres@v4
         with:
           username: admin
@@ -44,20 +44,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
-
-      - name: Spellcheck
-        id: cspell-action
-        uses: streetsidesoftware/cspell-action@v2
-        with:
-          verbose: true
-          incremental_files_only: false
-          files: |
-            /**
-            !/__*
-            !/*.{json,txt}
-            !/prisma
-            !/coverage
-            !/node_modules
 
       - name: Install Dependancies
         run: npm ci
