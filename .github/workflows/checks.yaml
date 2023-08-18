@@ -31,3 +31,9 @@ jobs:
         uses: creyD/prettier_action@v4.3
         with:
           prettier_options: --write **/*.{js,ts,tsx,md}
+
+      - name: echo
+        run: |
+          echo "${{ github.repository }}"
+          echo "${{ github.ref_name }}"
+          echo "${{ secrets.GITHUB_TOKEN }}"

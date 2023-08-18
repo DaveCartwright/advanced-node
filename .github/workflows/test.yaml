@@ -23,12 +23,16 @@ jobs:
       - run: |
           echo "Previous version: ${{ steps.bump.outputs.previous_version }}"
           echo "New Version: ${{ steps.bump.outputs.new_version }}"
-
+      - name: echo
+        run: |
+          echo "${{ github.repository }}"
+          echo "${{ github.ref_name }}"
+          echo "${{ secrets.GITHUB_TOKEN }}"
       - name: Push files and tag
         uses: Amraneze/push-to-protected-branch@v1.5.0
         with:
           repository: ${{ github.repository }}
           branch_name: ${{ github.ref_name }}
-          github_token: ${{ secrets.TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           commit_message: 'ci: build version v${{ steps.bump.outputs.new_version }}'
           files_to_commit: 'package.json'
