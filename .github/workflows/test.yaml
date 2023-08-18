@@ -19,10 +19,16 @@ jobs:
         id: bump
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: EndBug/add-and-commit@v9
-        with:
-          message: 'Bump package version ${{ steps.bump.outputs.new_version }}'
 
       - run: |
           echo "Previous version: ${{ steps.bump.outputs.previous_version }}"
           echo "New Version: ${{ steps.bump.outputs.new_version }}"
+
+      - name: Push files and tag
+        uses: Amraneze/push-to-protected-branch@latest
+        with:
+          repository: ${{ github.repository }}
+          branch_name: ${{ github.ref_name }}
+          github_token: ${{ secrets.TOKEN }}
+          commit_message: 'ci: build version v${{ steps.bump.outputs.new_version }}'
+          files_to_commit: 'package.json'
