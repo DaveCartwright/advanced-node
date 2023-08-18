@@ -14,10 +14,14 @@ jobs:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: copapow/version-bump-package@v1
+        id: bump
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: EndBug/add-and-commit@v9
+        with:
+          message: 'Bump package version ${{ steps.bump.outputs.new_version }}'
 
       - run: |
           echo "Previous version: ${{ steps.bump.outputs.previous_version }}"
