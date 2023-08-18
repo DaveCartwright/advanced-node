@@ -25,7 +25,7 @@ jobs:
           echo "New Version: ${{ steps.bump.outputs.new_version }}"
 
       - name: Push files and tag
-        uses: Amraneze/push-to-protected-branch@latest
+        uses: Amraneze/push-to-protected-branch@v1.5.0
         with:
           repository: ${{ github.repository }}
           branch_name: ${{ github.ref_name }}
