@@ -5,11 +5,11 @@ name: CI/CD GitHub Actions Example
 on:
   # whenever code is pushed to [these branches]
   push:
-    branches:
+    branches-ignore:
       - master
   # whenever a branch is going to merge into [these branches]
   pull_request:
-    branches:
+    branches-ignore:
       - master
 
 jobs:

@@ -6,10 +6,7 @@ on:
   pull_request:
     types: [closed]
     branches:
-      - main
-
-permissions:
-  contents: write
+      - master
 
 jobs:
   bump-package-version:
