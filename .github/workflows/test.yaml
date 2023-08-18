@@ -8,6 +8,9 @@ on:
     branches:
       - master
 
+permissions:
+  contents: write
+
 jobs:
   bump-package-version:
     # Only run if the PR closed by merging
@@ -29,6 +32,6 @@ jobs:
         with:
           repository: ${{ github.repository }}
           branch_name: ${{ github.ref_name }}
-          github_token: ${{ secrets.TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           commit_message: 'ci: build version v${{ steps.bump.outputs.new_version }}'
           files_to_commit: 'package.json'
