@@ -1,21 +1,44 @@
 # https://docs.github.com/actions
 
 name: CI/CD GitHub Actions Example
-# hooks to control when the workflow runs. Can use on: [push] to catch all branches push and merge
 on:
-  # whenever code is pushed to [these branches]
+  # applies to any brance EXCEPT master
   push:
     branches-ignore:
       - master
-  # whenever a branch is going to merge into [these branches]
   pull_request:
     branches-ignore:
       - master
 
 jobs:
+  checks:
+    permissions:
+      contents: write
+    name: Checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Spellcheck
+        id: cspell-action
+        uses: streetsidesoftware/cspell-action@v2
+        with:
+          verbose: true
+          files: |
+            /src/**/*.{ts,js,tsx,md}
+            /readme.md
+
+      - name: Prettify code
+        uses: creyD/prettier_action@v4.3
+        with:
+          prettier_options: --write **/*.{js,ts,tsx,md}
+
   tests:
     name: Unit and Integration Tests
     runs-on: ubuntu-latest
+    needs: checks
+
     env:
       DATABASE_URL: 'postgresql://admin:example@localhost:5432/postgres?schema=public'
       NODE_VERSION: 20.x
